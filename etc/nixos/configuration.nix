@@ -26,7 +26,7 @@
 
   # Set your time zone.
   time.timeZone = "Asia/Yekaterinburg";
-
+  sound.enable = true;
   # Select internationalisation properties.
   i18n.defaultLocale = "en_US.UTF-8";
 
@@ -42,6 +42,10 @@
     LC_TIME = "ru_RU.UTF-8";
   };
 
+  hardware.pulseaudio.enable = true;
+  hardware.pulseaudio.support32Bit = true;
+  nixpkgs.config.pulseaudio=true;
+  hardware.pulseaudio.extraConfig = "load-module module-combine-sink";
   # Configure keymap in X11
   services.xserver = {
     layout = "us";
@@ -68,7 +72,7 @@
   users.users.talkingfoxmid = {
     isNormalUser = true;
     description = "talkingfoxmid";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [ "networkmanager" "wheel" "audio" ];
     packages = with pkgs; [];
   };
 
@@ -79,7 +83,12 @@
   # $ nix search wget
   environment.pathsToLink = ["libexec"];
   environment.systemPackages = with pkgs; [
-    vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
+    vim
+    pkgs.jdk
+    pkgs.jetbrains.idea-community
+    vscode
+    pavucontrol
+    rxvt-unicode
     pkgs.chromium
     tdesktop
     git
