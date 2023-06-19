@@ -1,0 +1,11 @@
+/bin
+/boot
+/dev
+/mnt
+/nix
+/root
+/srv
+/sys
+/run
+/usr
+/var
