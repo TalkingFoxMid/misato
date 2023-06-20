@@ -10,6 +10,7 @@
       ./hardware-configuration.nix
     ];
 
+  
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
@@ -48,9 +49,10 @@
   hardware.pulseaudio.extraConfig = "load-module module-combine-sink";
   # Configure keymap in X11
   services.xserver = {
-    layout = "us";
-    xkbVariant = "";
+    layout = "us,ru";
+    xkbOptions = "eurosign:e, compose:menu, grp:alt_space_toggle";
     enable = true;
+    exportConfiguration = true;
     desktopManager = {
       xterm.enable = false;
     };
@@ -84,16 +86,25 @@
   environment.pathsToLink = ["libexec"];
   environment.systemPackages = with pkgs; [
     vim
+    discord
+    termite
     pkgs.jdk
     pkgs.jetbrains.idea-community
+    obsidian
     vscode
     pavucontrol
     rxvt-unicode
     pkgs.chromium
     tdesktop
     git
+    picom
   #  wget
   ];
+
+  services.picom = {
+    enable = true;
+    activeOpacity = 0.90;
+  };
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
@@ -121,5 +132,4 @@
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "23.05"; # Did you read the comment?
-
 }
