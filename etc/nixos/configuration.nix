@@ -86,6 +86,7 @@
   environment.pathsToLink = ["libexec"];
   environment.systemPackages = with pkgs; [
     vim
+    qrencode
     discord
     termite
     pkgs.jdk
