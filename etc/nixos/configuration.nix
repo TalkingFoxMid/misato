@@ -105,6 +105,7 @@
     pkgs.chromium
     tdesktop
     git
+    ranger
     picom
   #  wget
   ];
