@@ -80,12 +80,20 @@
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
-
+	programs.gnupg.agent = {                                                      
+	  enable = true;
+	  enableSSHSupport = true;
+	  pinentryFlavor = "qt";
+	};
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.pathsToLink = ["libexec"];
   environment.systemPackages = with pkgs; [
     vim
+    qrencode
+    feh
+    pass
+    gnupg
     discord
     termite
     pkgs.jdk
@@ -97,6 +105,7 @@
     pkgs.chromium
     tdesktop
     git
+    ranger
     picom
   #  wget
   ];
