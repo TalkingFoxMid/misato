@@ -106,10 +106,13 @@
     tdesktop
     git
     ranger
+    polybar
     picom
   #  wget
   ];
-
+  services.polybar = {
+    enable = true;
+  };
   services.picom = {
     enable = true;
     activeOpacity = 0.90;
