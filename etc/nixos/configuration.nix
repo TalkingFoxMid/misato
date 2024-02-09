@@ -2,15 +2,23 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, ... }:
-
+{ config, pkgs, lib, ... }:
 {
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
     ];
+  virtualisation.docker.enable = true;
+  virtualisation.docker.rootless = {
+    enable = true;
+    setSocketVariable = true;
+  };
+  system.activationScripts.ldso = lib.stringAfter [ "usrbinenv" ] ''
+            mkdir -m 0755 -p /lib64
+            ln -sfn ${pkgs.glibc.out}/lib64/ld-linux-x86-64.so.2 /lib64/ld-linux-x86-64.so.2.tmp
+            mv -f /lib64/ld-linux-x86-64.so.2.tmp /lib64/ld-linux-x86-64.so.2 # atomically replace
+          '';
 
-  
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
@@ -46,6 +54,7 @@
   hardware.pulseaudio.enable = true;
   hardware.pulseaudio.support32Bit = true;
   nixpkgs.config.pulseaudio=true;
+  nixpkgs.config.permittedInsecurePackages = ["electron-25.9.0"];
   hardware.pulseaudio.extraConfig = "load-module module-combine-sink";
   # Configure keymap in X11
   services.xserver = {
@@ -70,11 +79,13 @@
     };
   };
 
+  programs.zsh.enable = true;
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.talkingfoxmid = {
     isNormalUser = true;
+    shell = pkgs.zsh;
     description = "talkingfoxmid";
-    extraGroups = [ "networkmanager" "wheel" "audio" ];
+    extraGroups = [ "networkmanager" "wheel" "audio" "docker" ];
     packages = with pkgs; [];
   };
 
@@ -88,14 +99,21 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.pathsToLink = ["libexec"];
+  nixpkgs.config.zathura.useMupdf = true;
   environment.systemPackages = with pkgs; [
-    vim
+    neovim
+    neo4j
+    neo4j-desktop
+    bloomrpc
+    patchelf
+    protobuf3_20
+    transmission_4-gtk
+    zathura
     qrencode
     feh
     pass
     gnupg
     discord
-    termite
     pkgs.jdk
     pkgs.jetbrains.idea-community
     obsidian
@@ -106,13 +124,9 @@
     tdesktop
     git
     ranger
-    polybar
     picom
   #  wget
   ];
-  services.polybar = {
-    enable = true;
-  };
   services.picom = {
     enable = true;
     activeOpacity = 0.90;
@@ -145,3 +159,5 @@
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "23.05"; # Did you read the comment?
 }
+
+
